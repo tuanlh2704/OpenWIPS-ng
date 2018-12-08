@@ -412,7 +412,7 @@ struct packet_info * parse_packet_basic_info(struct pcap_packet * packet)
 		// Only address 1 exists (receiver address)
 		ret->recipient_address = ret->address1;
 	} else {
-		if (packet->header.cap_len < ret->packet_header_len + 23 + (ret->fcs_present) ? FCS_SIZE : 0) {
+		if (packet->header.cap_len < ret->packet_header_len + 23 + (ret->fcs_present != 0) ? FCS_SIZE : 0) {
 			// Packet not long enough for a sequence number
 #ifdef EXTRA_DEBUG
 			fprintf(stderr, "parse_packet_basic_info(): Error - Frame <%d-%d> too short to get SN and fragment # (FCS: 0x%x).\n",
@@ -427,10 +427,10 @@ struct packet_info * parse_packet_basic_info(struct pcap_packet * packet)
 
 		ret->frame_payload = ret->frame_start + 24 + ((ret->QoS) ? 2 : 0); // There are 2 bytes of QoS
 
-		if (packet->header.cap_len > ret->packet_header_len + 10 + 6 + (ret->fcs_present) ? FCS_SIZE : 0) {
+		if (packet->header.cap_len > ret->packet_header_len + 10 + 6 + (ret->fcs_present != 0) ? FCS_SIZE : 0) {
 			ret->address2 = ret->frame_start + 10;
 		}
-		if (packet->header.cap_len > ret->packet_header_len + 16 + 6 + (ret->fcs_present) ? FCS_SIZE : 0) {
+		if (packet->header.cap_len > ret->packet_header_len + 16 + 6 + (ret->fcs_present != 0) ? FCS_SIZE : 0) {
 			ret->address3 = ret->frame_start + 16;
 		}
 
